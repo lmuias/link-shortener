@@ -5,7 +5,7 @@ export class Link {
   @Prop({ required: true })
   fullUrl: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, inde: true })
   shortUrl: string;
 }
 

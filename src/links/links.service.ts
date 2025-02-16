@@ -21,10 +21,16 @@ export class LinksService {
     return newLink.save();
   }
   async getFullUrl(shortUrl: string): Promise<{ fullUrl: string }> {
-    const link = await this.linkModel.findOne({ shortUrl });
+    const link = await this.linkModel.findOne({ shortUrl: String(shortUrl) });
     if (!link) {
+      console.log('Not found:', shortUrl);
       throw new NotFoundException('Short URL not found');
     }
-    return { fullUrl: link.fullUrl };
+    const fullUrl =
+      link.fullUrl.startsWith('http://') || link.fullUrl.startsWith('https://')
+        ? link.fullUrl
+        : `http://${link.fullUrl}`;
+
+    return { fullUrl };
   }
 }

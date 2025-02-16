@@ -1,8 +1,19 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { LinksService } from './links.service';
 import { Link } from './schema/links.schema';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Response } from 'express';
 
 @Controller('links')
+@UseGuards(JwtAuthGuard)
 export class LinksController {
   constructor(private readonly linkService: LinksService) {}
 
@@ -21,9 +32,16 @@ export class LinksController {
 
   @Get(':shortUrl')
   async redirectToFullUrl(
-    @Param('shortUrl')
-    shortUrl: string,
-  ): Promise<{ fullUrl: string }> {
-    return this.linkService.getFullUrl(shortUrl);
+    @Param('shortUrl') shortUrl: string,
+    @Res() res: Response,
+  ) {
+    console.log('Incoming shortUrl:', shortUrl);
+    const link = await this.linkService.getFullUrl(shortUrl);
+    if (link && link.fullUrl) {
+      return res.redirect(link.fullUrl);
+    } else {
+      console.log('Short URL not found:', shortUrl);
+      return res.status(404).json({ message: 'Short URL not found' });
+    }
   }
 }

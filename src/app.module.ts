@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -19,6 +21,14 @@ import { ThrottlerModule } from '@nestjs/throttler';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('DB_LINK'),
+      }),
+    }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h' },
       }),
     }),
     CacheModule.registerAsync({
@@ -43,6 +53,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
     AuthModule,
   ],
   controllers: [AppController, LinksController],
-  providers: [AppService, LinksService],
+  providers: [AppService, LinksService, JwtAuthGuard],
 })
 export class AppModule {}
