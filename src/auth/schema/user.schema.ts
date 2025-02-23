@@ -5,10 +5,10 @@ import * as bcrypt from 'bcrypt';
 @Schema()
 export class User extends Document {
   @Prop({ required: true, unique: true })
-  email: string;
+  email!: string;
 
   @Prop({ required: true })
-  password: string;
+  password!: string;
 
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);

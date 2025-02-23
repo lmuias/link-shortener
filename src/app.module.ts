@@ -12,6 +12,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -36,9 +37,9 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         store: redisStore,
-        host: 'localhost',
-        port: 6379,
-        ttl: 60,
+        host: configService.get('REDIS_HOST', 'localhost'),
+        port: configService.get('REDIS_PORT', 6379),
+        ttl: configService.get('CACHE_TTL', 60),
       }),
     }),
     ThrottlerModule.forRoot({
@@ -51,6 +52,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     }),
     LinksModule,
     AuthModule,
+    RedisModule,
   ],
   controllers: [AppController, LinksController],
   providers: [AppService, LinksService, JwtAuthGuard],

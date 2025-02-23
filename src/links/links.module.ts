@@ -18,6 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         signOptions: { expiresIn: '1h' },
       }),
     }),
+    ConfigModule,
   ],
   controllers: [LinksController],
   providers: [LinksService, JwtAuthGuard],

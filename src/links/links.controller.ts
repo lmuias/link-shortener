@@ -11,17 +11,21 @@ import { LinksService } from './links.service';
 import { Link } from './schema/links.schema';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Response } from 'express';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('links')
 @UseGuards(JwtAuthGuard)
 export class LinksController {
   constructor(private readonly linkService: LinksService) {}
 
+  @Throttle({ default: { limit: 100, ttl: 60_000 } })
   @Get()
   async getAllLinks(): Promise<Link[]> {
     return this.linkService.findAll();
   }
 
+  
+  @Throttle({ default: { limit: 100, ttl: 60_000 } })
   @Post()
   async createShorLink(
     @Body('fullUrl')
@@ -30,6 +34,8 @@ export class LinksController {
     return this.linkService.create(fullLink);
   }
 
+  
+  @Throttle({ default: { limit: 100, ttl: 60_000 } })
   @Get(':shortUrl')
   async redirectToFullUrl(
     @Param('shortUrl') shortUrl: string,
