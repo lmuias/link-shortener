@@ -7,8 +7,6 @@ import { LinksController } from './links/links.controller';
 import { LinksModule } from './links/links.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -30,16 +28,6 @@ import { RedisModule } from './redis/redis.module';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: '1h' },
-      }),
-    }),
-    CacheModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get('REDIS_HOST', 'localhost'),
-        port: configService.get('REDIS_PORT', 6379),
-        ttl: configService.get('CACHE_TTL', 60),
       }),
     }),
     ThrottlerModule.forRoot({
