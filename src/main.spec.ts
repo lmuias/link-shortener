@@ -65,6 +65,6 @@ describe('Main bootstrap', () => {
   });
 
   it('should start listening on correct port', () => {
-    expect(appMock.listen).toHaveBeenCalledWith(3000);
+    expect(appMock.listen).toHaveBeenCalledWith(process.env.PORT || 3000);
   });
 });
