@@ -4,7 +4,7 @@ import { LinkSchema } from './schema/links.schema';
 import { LinksController } from './links.controller';
 import { LinksService } from './links.service';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
